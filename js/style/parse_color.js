@@ -15,6 +15,12 @@ function parseColor(input) {
         return input;
 
     // GL function
+    } else if (input && input.range) {
+        return util.extend({}, input, {
+            range: input.range.map(parseColor)
+        });
+
+    // legacy GL function
     } else if (input && input.stops) {
         return util.extend({}, input, {
             stops: input.stops.map(parseFunctionStopColor)

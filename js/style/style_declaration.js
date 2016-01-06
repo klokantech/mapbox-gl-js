@@ -1,7 +1,35 @@
 'use strict';
 
-var MapboxGLFunction = require('mapbox-gl-function');
 var parseColor = require('./parse_color');
+var createGLFunction = require('mapbox-gl-function');
+
+function createBackwardsCompatibleGLFunction(reference, parameters) {
+    if (parameters.stops) {
+        var domain = [];
+        var range = [];
+
+        for (var i = 0; i < parameters.stops.length; i++) {
+            domain.push(parameters.stops[i][0]);
+            range.push(parameters.stops[i][1]);
+        }
+
+        parameters.domain = domain;
+        parameters.range = range;
+        delete parameters.stops;
+
+        if (reference.function === 'interpolated') {
+            parameters.type = 'exponential';
+        } else {
+            parameters.domain.shift();
+            parameters.type = 'interval';
+        }
+    }
+
+    var fun = createGLFunction(parameters);
+    return function(zoom) {
+        return fun({$zoom: zoom});
+    };
+}
 
 module.exports = StyleDeclaration;
 
@@ -14,13 +42,10 @@ function StyleDeclaration(reference, value) {
     this.json = JSON.stringify(this.value);
 
     var parsedValue = this.type === 'color' ? parseColor(this.value) : value;
-    if (reference.function === 'interpolated') {
-        this.calculate = MapboxGLFunction.interpolated(parsedValue);
-    } else {
-        this.calculate = MapboxGLFunction['piecewise-constant'](parsedValue);
-        if (reference.transition) {
-            this.calculate = transitioned(this.calculate);
-        }
+    this.calculate = createBackwardsCompatibleGLFunction(reference, parsedValue);
+
+    if (reference.function !== 'interpolated' && reference.transition) {
+        this.calculate = transitioned(this.calculate);
     }
 }
 
