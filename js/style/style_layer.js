@@ -73,6 +73,7 @@ StyleLayer.prototype = util.inherit(Evented, {
             delete this._layoutDeclarations[name];
         } else {
             if (validateStyle.emitErrors(this, validateStyle.layoutProperty({
+                key: 'layout',
                 layerType: this.type,
                 objectKey: name,
                 value: value,
@@ -110,6 +111,7 @@ StyleLayer.prototype = util.inherit(Evented, {
                 delete this._paintTransitionOptions[klass || ''][name];
             } else {
                 if (validateStyle.emitErrors(this, validateStyle.paintProperty({
+                    key: klass ? 'paint.' + klass : 'paint',
                     layerType: this.type,
                     objectKey: name,
                     value: value,
@@ -125,6 +127,7 @@ StyleLayer.prototype = util.inherit(Evented, {
                 delete this._paintDeclarations[klass || ''][name];
             } else {
                 if (validateStyle.emitErrors(this, validateStyle.paintProperty({
+                    key: klass ? 'paint.' + klass : 'paint',
                     layerType: this.type,
                     objectKey: name,
                     value: value,

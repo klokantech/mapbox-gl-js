@@ -26,10 +26,15 @@ function drawCircles(painter, source, layer, coords) {
     // are inversely related.
     var antialias = 1 / browser.devicePixelRatio / layer.paint['circle-radius'];
 
-    var color = util.premultiply(layer.paint['circle-color'], layer.paint['circle-opacity']);
-    gl.uniform4fv(shader.u_color, color);
-    gl.uniform1f(shader.u_blur, Math.max(layer.paint['circle-blur'], antialias));
-    gl.uniform1f(shader.u_size, layer.paint['circle-radius']);
+    var color = util.premultiply(layer.paint['circle-color'], layer.paint['circle-opacity']).map(function(v) { return v * 255; });
+    gl.disableVertexAttribArray(shader.a_color);
+    gl.vertexAttrib4fv(shader.a_color, color);
+
+    gl.disableVertexAttribArray(shader.a_blur);
+    gl.vertexAttrib1f(shader.a_blur, Math.max(layer.paint['circle-blur'], antialias));
+
+    gl.disableVertexAttribArray(shader.a_size);
+    gl.vertexAttrib1f(shader.a_size, layer.paint['circle-radius']);
 
     for (var i = 0; i < coords.length; i++) {
         var coord = coords[i];
@@ -64,4 +69,8 @@ function drawCircles(painter, source, layer, coords) {
             gl.drawElements(gl.TRIANGLES, count, gl.UNSIGNED_SHORT, elementOffset);
         }
     }
+
+    gl.enableVertexAttribArray(shader.a_color);
+    gl.enableVertexAttribArray(shader.a_blur);
+    gl.enableVertexAttribArray(shader.a_size);
 }
