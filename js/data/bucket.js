@@ -5,6 +5,7 @@ var featureFilter = require('feature-filter');
 var ElementGroups = require('./element_groups');
 var Buffer = require('./buffer');
 var StyleLayer = require('../style/style_layer');
+var util = require('../util/util');
 
 module.exports = Bucket;
 
@@ -52,6 +53,7 @@ function Bucket(options) {
     this.overscaling = options.overscaling;
 
     this.layer = StyleLayer.create(options.layer);
+    this.layer.cascade([], {transition: false});
     this.layer.recalculate(this.zoom, { lastIntegerZoom: Infinity, lastIntegerZoomTime: 0, lastZoom: 0 });
 
     this.layers = [this.layer.id];
@@ -175,6 +177,8 @@ Bucket.prototype.serialize = function() {
         elementGroups: this.elementGroups
     };
 };
+
+Bucket.prototype._premultiplyColor = util.premultiply;
 
 
 var createVertexAddMethodCache = {};

@@ -35,6 +35,17 @@ CircleBucket.prototype.shaders = {
                 '(x * 2) + ((extrudeX + 1) / 2)',
                 '(y * 2) + ((extrudeY + 1) / 2)'
             ]
+        }, {
+            name: 'color',
+            components: 4,
+            type: Bucket.AttributeType.UNSIGNED_BYTE,
+            value: (
+                'this._premultiplyColor(' +
+                    'this.layer.paint["circle-color"],' +
+                    'this.layer.paint["circle-opacity"]' +
+                ')'
+            ),
+            multiplier: 255
         }]
     }
 };

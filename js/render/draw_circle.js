@@ -1,7 +1,6 @@
 'use strict';
 
 var browser = require('../util/browser');
-var util = require('../util/util');
 
 module.exports = drawCircles;
 
@@ -25,10 +24,6 @@ function drawCircles(painter, source, layer, coords) {
     // size and the intent is to keep the blur at roughly 1px, the two
     // are inversely related.
     var antialias = 1 / browser.devicePixelRatio / layer.paint['circle-radius'];
-
-    var color = util.premultiply(layer.paint['circle-color'], layer.paint['circle-opacity']).map(function(v) { return v * 255; });
-    gl.disableVertexAttribArray(shader.a_color);
-    gl.vertexAttrib4fv(shader.a_color, color);
 
     gl.disableVertexAttribArray(shader.a_blur);
     gl.vertexAttrib1f(shader.a_blur, Math.max(layer.paint['circle-blur'], antialias));
