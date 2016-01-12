@@ -565,7 +565,8 @@ test('TilePyramid#tilesIn', function (t) {
                 loaded: true,
                 uses: 1,
                 tileSize: 512,
-                sourceMaxZoom: 14
+                sourceMaxZoom: 14,
+                buckets: {}
             },
             minX: 4096,
             maxX: 12288,
@@ -578,7 +579,8 @@ test('TilePyramid#tilesIn', function (t) {
                 loaded: true,
                 uses: 1,
                 tileSize: 512,
-                sourceMaxZoom: 14
+                sourceMaxZoom: 14,
+                buckets: {}
             },
             minX: -4096,
             maxX: 4096,
