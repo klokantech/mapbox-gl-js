@@ -14,13 +14,13 @@ function parseColor(input) {
     } else if (Array.isArray(input)) {
         return input;
 
-    // GL function
+    // style function
     } else if (input && input.range) {
         return util.extend({}, input, {
             range: input.range.map(parseColor)
         });
 
-    // legacy GL function
+    // legacy style function
     } else if (input && input.stops) {
         return util.extend({}, input, {
             stops: input.stops.map(parseFunctionStopColor)
@@ -46,7 +46,7 @@ function parseFunctionStopColor(stop) {
 }
 
 function colorDowngrade(color) {
-    return [color[0] / 255, color[1] / 255, color[2] / 255, color[3] / 1];
+    return [color[0] / 255, color[1] / 255, color[2] / 255, color[3]];
 }
 
 module.exports = parseColor;
