@@ -23,11 +23,11 @@ SymbolStyleLayer.prototype = util.inherit(StyleLayer, {
 
     getLayoutValue: function(name, zoom, zoomHistory) {
         if (name === 'text-rotation-alignment' &&
-                this.getLayoutValue('symbol-placement', zoom, zoomHistory) === 'line' &&
+                this.getLayoutValue('symbol-placement', {$zoom: zoom, $zoomHistory: zoomHistory}) === 'line' &&
                 !this.getLayoutProperty('text-rotation-alignment')) {
             return 'map';
         } else if (name === 'icon-rotation-alignment' &&
-                this.getLayoutValue('symbol-placement', zoom, zoomHistory) === 'line' &&
+                this.getLayoutValue('symbol-placement', {$zoom: zoom, $zoomHistory: zoomHistory}) === 'line' &&
                 !this.getLayoutProperty('icon-rotation-alignment')) {
             return 'map';
         } else {

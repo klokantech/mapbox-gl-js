@@ -2,16 +2,6 @@
 
 var createMapboxGLFunction = require('mapbox-gl-function');
 
-function createBackwardsCompatible(reference, parameters) {
-    var innerFun = create(reference, parameters);
-    var outerFun = function(zoom) {
-        return innerFun({$zoom: zoom}, {});
-    };
-    outerFun.isFeatureConstant = innerFun.isFeatureConstant;
-    outerFun.isGlobalConstant = innerFun.isGlobalConstant;
-    return outerFun;
-}
-
 function create(reference, parameters) {
     if (parameters && parameters.stops) {
         var domain = [];
@@ -37,7 +27,4 @@ function create(reference, parameters) {
     return createMapboxGLFunction(parameters);
 }
 
-module.exports = {
-    create: create,
-    createBackwardsCompatible: createBackwardsCompatible
-};
+module.exports = create;
