@@ -78,7 +78,8 @@ function Bucket(options) {
         this[this.getAddMethodName(shaderName, 'vertex')] = createVertexAddMethod(
             shaderName,
             shader,
-            this.getBufferName(shaderName, 'vertex')
+            this.getBufferName(shaderName, 'vertex'),
+            this.getAttributes(shaderName, {isEnabled: true})
         );
     }
 }
@@ -122,7 +123,7 @@ Bucket.prototype.resetBuffers = function(buffers) {
         if (shader.vertexBuffer && !buffers[vertexBufferName]) {
             buffers[vertexBufferName] = new Buffer({
                 type: Buffer.BufferType.VERTEX,
-                attributes: shader.attributes
+                attributes: this.getAttributes(shaderName, {isEnabled: true})
             });
         }
 
@@ -147,6 +148,100 @@ Bucket.prototype.resetBuffers = function(buffers) {
             buffers[this.getBufferName(shaderName, 'element')],
             buffers[this.getBufferName(shaderName, 'secondElement')]
         );
+    }
+};
+
+Bucket.prototype.getAttributes = function(shaderName, filters) {
+    filters = filters || {};
+    filters.isDisabled = filters.isEnabled === undefined ? filters.isDisabled : !filters.isEnabled;
+
+    var output = [];
+
+    var attributes = this.shaders[shaderName].attributes;
+    for (var i = 0; i < attributes.length; i++) {
+        var attribute = attributes[i];
+        var isDisabled = this.isAttributeDisabled(attribute);
+        if (filters.isDisabled === undefined || filters.isDisabled === isDisabled) {
+            output.push(attribute);
+        }
+    }
+
+    return output;
+};
+
+Bucket.prototype.isAttributeDisabled = function(attribute) {
+    if (attribute.isDisabled === undefined || attribute.isDisabled === false) {
+        return false;
+    } else if (attribute.isDisabled === true) {
+        return true;
+    } else {
+        return !!attribute.isDisabled.call(this);
+    }
+};
+
+/**
+ * Set the attribute pointers in a WebGL context
+ * @private
+ * @param gl The WebGL context
+ * @param shader The active WebGL shader
+ * @param {number} offset The offset of the attribute data in the currently bound GL buffer.
+ * @param {Array} arguments to be passed to disabled attribute value functions
+ */
+Bucket.prototype.setAttribPointers = function(shaderName, gl, glShader, offset, args) {
+    // Set disabled attributes
+    var disabledAttributes = this.getAttributes(shaderName, {isDisabled: true});
+    for (var i = 0; i < disabledAttributes.length; i++) {
+        var attribute = disabledAttributes[i];
+        var glAttribute = glShader['a_' + attribute.name];
+        gl.disableVertexAttribArray(glAttribute);
+        gl['vertexAttrib' + attribute.components + 'fv'](glAttribute, this._getAttributeValue(shaderName, attribute, args));
+    }
+
+    // Set enabled attributes
+    this.buffers[this.getBufferName(shaderName, 'vertex')].setAttribPointers(gl, glShader, offset);
+};
+
+/**
+ * Restore the state of the attribute pointers in a WebGL context
+ * @private
+ * @param gl The WebGL context
+ * @param shader The active WebGL shader
+ */
+Bucket.prototype.unsetAttribPointers = function(shaderName, gl, glShader) {
+    var attributes = this.shaders[shaderName].attributes;
+
+    // Set disabled attributes
+    for (var i = 0; i < attributes.length; i++) {
+        var attribute = attributes[i];
+        var glAttribute = glShader['a_' + attribute.name];
+        if (attribute.isDisabled && attribute.isDisabled.call(this)) {
+            gl.enableVertexAttribArray(glAttribute);
+        }
+    }
+};
+
+var _getAttributeValueCache = {};
+// TODO break the function creation logic into a separate function
+Bucket.prototype._getAttributeValue = function(shaderName, attribute, args) {
+    if (!_getAttributeValueCache[shaderName]) _getAttributeValueCache[shaderName] = {};
+
+    if (!_getAttributeValueCache[shaderName][attribute.name]) {
+        var bodyArgs = this.shaders[shaderName].attributeArgs;
+        var body = 'return ';
+        if (Array.isArray(attribute.value)) {
+            body += '[' + attribute.value.join(', ') + ']';
+        } else {
+            body += attribute.value;
+        }
+        _getAttributeValueCache[shaderName][attribute.name] = new Function(bodyArgs, body);
+    }
+
+    var value = _getAttributeValueCache[shaderName][attribute.name].apply(this, args);
+
+    if (attribute.multiplier) {
+        return value.map(function(v) { return v * attribute.multiplier; });
+    } else {
+        return value;
     }
 };
 
@@ -182,12 +277,12 @@ Bucket.prototype._premultiplyColor = util.premultiply;
 
 
 var createVertexAddMethodCache = {};
-function createVertexAddMethod(shaderName, shader, bufferName) {
+function createVertexAddMethod(shaderName, shader, bufferName, enabledAttributes) {
     var body = '';
 
     var pushArgs = [];
-    for (var i = 0; i < shader.attributes.length; i++) {
-        var attribute = shader.attributes[i];
+    for (var i = 0; i < enabledAttributes.length; i++) {
+        var attribute = enabledAttributes[i];
 
         var attributePushArgs = [];
         if (Array.isArray(attribute.value)) {
@@ -200,13 +295,17 @@ function createVertexAddMethod(shaderName, shader, bufferName) {
             }
         }
 
+        var multipliedAttributePushArgs;
         if (attribute.multiplier) {
+            multipliedAttributePushArgs = [];
             for (var k = 0; k < attributePushArgs.length; k++) {
-                attributePushArgs[k] += '*' + attribute.multiplier;
+                multipliedAttributePushArgs[k] = attributePushArgs[k] + '*' + attribute.multiplier;
             }
+        } else {
+            multipliedAttributePushArgs = attributePushArgs;
         }
 
-        pushArgs = pushArgs.concat(attributePushArgs);
+        pushArgs = pushArgs.concat(multipliedAttributePushArgs);
     }
 
     body += 'return this.buffers.' + bufferName + '.push(' + pushArgs.join(',') + ');';

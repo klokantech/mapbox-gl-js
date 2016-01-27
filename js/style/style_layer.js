@@ -167,6 +167,16 @@ StyleLayer.prototype = util.inherit(Evented, {
         }
     },
 
+    isPaintValueFeatureConstant: function(name) {
+        var transition = this._paintTransitions[name];
+
+        if (transition) {
+            return transition.declaration.isFeatureConstant;
+        } else {
+            return true;
+        }
+    },
+
     isHidden: function(zoom) {
         if (this.minzoom && zoom < this.minzoom) return true;
         if (this.maxzoom && zoom >= this.maxzoom) return true;
@@ -230,7 +240,9 @@ StyleLayer.prototype = util.inherit(Evented, {
     recalculate: function(zoom, zoomHistory) {
         this.paint = {};
         for (var paintName in this._paintSpecifications) {
-            this.paint[paintName] = this.getPaintValue(paintName, {$zoom: zoom, $zoomHistory: zoomHistory});
+            if (this.isPaintValueFeatureConstant(paintName)) {
+                this.paint[paintName] = this.getPaintValue(paintName, {$zoom: zoom, $zoomHistory: zoomHistory});
+            }
         }
 
         this.layout = {};

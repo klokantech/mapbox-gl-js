@@ -50,7 +50,12 @@ map.on('load', function() {
         "source": "geojson-random-points",
         "paint": {
             "circle-radius": 5,
-            "circle-color": "#f0f"
+            "circle-opacity": 0.5,
+            "circle-color": {
+                range: ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'],
+                domain: [0, 16, 32, 48, 64, 80, 100],
+                property: 'mapbox'
+            }
         }
     });
 

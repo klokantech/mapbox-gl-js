@@ -15,6 +15,8 @@ function StyleDeclaration(reference, value) {
 
     var parsedValue = this.type === 'color' ? parseColor(value) : value;
     this.calculate = createStyleFunction(reference, parsedValue);
+    this.isFeatureConstant = this.calculate.isFeatureConstant;
+    this.isGlobalConstant = this.calculate.isGlobalConstant;
 
     if (reference.function !== 'interpolated' && reference.transition) {
         this.calculate = transitioned(this.calculate);
