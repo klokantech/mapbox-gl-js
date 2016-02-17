@@ -51,7 +51,7 @@ test('Map', function(t) {
         t.test('returns self', function(t) {
             var map = createMap(),
                 style = {
-                    version: 8,
+                    version: 9,
                     sources: {},
                     layers: []
                 };
@@ -62,7 +62,7 @@ test('Map', function(t) {
         t.test('sets up event forwarding', function(t) {
             var map = createMap(),
                 style = new Style({
-                    version: 8,
+                    version: 9,
                     sources: {},
                     layers: []
                 });
@@ -112,8 +112,8 @@ test('Map', function(t) {
         t.test('can be called more than once', function(t) {
             var map = createMap();
 
-            map.setStyle({version: 8, sources: {}, layers: []});
-            map.setStyle({version: 8, sources: {}, layers: []});
+            map.setStyle({version: 9, sources: {}, layers: []});
+            map.setStyle({version: 9, sources: {}, layers: []});
 
             t.end();
         });
@@ -169,7 +169,7 @@ test('Map', function(t) {
     t.test('#getStyle', function(t) {
         function createStyle() {
             return {
-                version: 8,
+                version: 9,
                 center: [-73.9749, 40.7736],
                 zoom: 12.5,
                 bearing: 29,
@@ -375,7 +375,7 @@ test('Map', function(t) {
     t.test('#batch', function(t) {
         var map = createMap();
         map.setStyle({
-            version: 8,
+            version: 9,
             sources: {},
             layers: []
         });
@@ -393,7 +393,7 @@ test('Map', function(t) {
     t.test('#featuresAt', function(t) {
         var map = createMap();
         map.setStyle({
-            "version": 8,
+            "version": 9,
             "sources": {},
             "layers": []
         });
@@ -438,7 +438,7 @@ test('Map', function(t) {
         t.test('sets property', function (t) {
             var map = createMap({
                 style: {
-                    "version": 8,
+                    "version": 9,
                     "sources": {
                         "geojson": {
                             "type": "geojson",
@@ -469,7 +469,7 @@ test('Map', function(t) {
         t.test('throw before loaded', function (t) {
             var map = createMap({
                 style: {
-                    version: 8,
+                    version: 9,
                     sources: {},
                     layers: []
                 }
@@ -486,7 +486,7 @@ test('Map', function(t) {
             // background layers do not have a source
             var map = createMap({
                 style: {
-                    "version": 8,
+                    "version": 9,
                     "sources": {},
                     "layers": [{
                         "id": "background",
@@ -512,7 +512,7 @@ test('Map', function(t) {
             // background layers do not have a source
             var map = createMap({
                 style: {
-                    "version": 8,
+                    "version": 9,
                     "sources": {},
                     "layers": [{
                         "id": "background",
@@ -534,7 +534,7 @@ test('Map', function(t) {
         t.test('sets visibility on raster layer', function (t) {
             var map = createMap({
                 style: {
-                    "version": 8,
+                    "version": 9,
                     "sources": {
                         "mapbox://mapbox.satellite": {
                             "type": "raster",
@@ -565,7 +565,7 @@ test('Map', function(t) {
         t.test('sets visibility on video layer', function (t) {
             var map = createMap({
                 style: {
-                    "version": 8,
+                    "version": 9,
                     "sources": {
                         "drone": {
                             "type": "video",
@@ -599,7 +599,7 @@ test('Map', function(t) {
         t.test('sets visibility on image layer', function (t) {
             var map = createMap({
                 style: {
-                    "version": 8,
+                    "version": 9,
                     "sources": {
                         "image": {
                             "type": "image",
@@ -635,7 +635,7 @@ test('Map', function(t) {
         t.test('sets property', function (t) {
             var map = createMap({
                 style: {
-                    "version": 8,
+                    "version": 9,
                     "sources": {},
                     "layers": [{
                         "id": "background",
@@ -652,13 +652,7 @@ test('Map', function(t) {
         });
 
         t.test('throw before loaded', function (t) {
-            var map = createMap({
-                style: {
-                    version: 8,
-                    sources: {},
-                    layers: []
-                }
-            });
+            var map = createMap(createStyle());
 
             t.throws(function () {
                 map.setPaintProperty('background', 'background-color', 'red');
@@ -674,7 +668,7 @@ test('Map', function(t) {
 
             console.error = function (e) {
                 console.error = error;
-                t.deepEqual(e.message, 'version: expected one of [8], 7 found');
+                t.deepEqual(e.message, 'version: expected one of [9], 7 found');
                 t.end();
             };
 
@@ -691,7 +685,7 @@ test('Map', function(t) {
 
 function createStyle() {
     return {
-        version: 8,
+        version: 9,
         center: [-73.9749, 40.7736],
         zoom: 12.5,
         bearing: 29,

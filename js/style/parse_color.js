@@ -20,12 +20,6 @@ function parseColor(input) {
             range: input.range.map(parseColor)
         });
 
-    // legacy style function
-    } else if (input && input.stops) {
-        return util.extend({}, input, {
-            stops: input.stops.map(parseFunctionStopColor)
-        });
-
     // Color string
     } else if (typeof input === 'string') {
         var parsedColor = parseCSSColor(input);
@@ -39,10 +33,6 @@ function parseColor(input) {
         throw new Error('Invalid color ' + input);
     }
 
-}
-
-function parseFunctionStopColor(stop) {
-    return [stop[0], parseColor(stop[1])];
 }
 
 function colorDowngrade(color) {

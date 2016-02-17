@@ -12,7 +12,7 @@ var util = require('../../../js/util/util');
 
 function createStyleJSON(properties) {
     return util.extend({
-        "version": 8,
+        "version": 9,
         "sources": {},
         "layers": []
     }, properties);
@@ -132,7 +132,7 @@ test('Style', function(t) {
 
 test('Style#_broadcastLayers', function(t) {
     var style = new Style({
-        'version': 8,
+        'version': 9,
         'sources': {
             'source': {
                 'type': 'vector'
@@ -165,7 +165,7 @@ test('Style#_broadcastLayers', function(t) {
 test('Style#_resolve', function(t) {
     t.test('creates StyleLayers', function(t) {
         var style = new Style({
-            "version": 8,
+            "version": 9,
             "sources": {
                 "foo": {
                     "type": "vector"
@@ -189,7 +189,7 @@ test('Style#_resolve', function(t) {
 
     t.test('handles ref layer preceding referent', function(t) {
         var style = new Style({
-            "version": 8,
+            "version": 9,
             "sources": {
                 "foo": {
                     "type": "vector"
@@ -364,7 +364,7 @@ test('Style#removeSource', function(t) {
         stylesheet.version =  'INVALID';
         var style = new Style(stylesheet);
         style.on('error', function (e) {
-            t.deepEqual(e.error.message, 'version: expected one of [8], INVALID found');
+            t.deepEqual(e.error.message, 'version: expected one of [9], INVALID found');
             t.end();
         });
     });
@@ -701,7 +701,7 @@ test('Style#removeLayer', function(t) {
 test('Style#setFilter', function(t) {
     t.test('sets a layer filter', function(t) {
         var style = new Style({
-            "version": 8,
+            "version": 9,
             "sources": {
                 "geojson": {
                     "type": "geojson",
@@ -779,7 +779,7 @@ test('Style#setFilter', function(t) {
 test('Style#setLayerZoomRange', function(t) {
     t.test('sets zoom range', function(t) {
         var style = new Style({
-            "version": 8,
+            "version": 9,
             "sources": {
                 "geojson": createGeoJSONSourceJSON()
             },
@@ -800,7 +800,7 @@ test('Style#setLayerZoomRange', function(t) {
 
     t.test('throw before loaded', function(t) {
         var style = new Style(createStyleJSON({
-            "version": 8,
+            "version": 9,
             "sources": {
                 "geojson": createGeoJSONSourceJSON()
             },
@@ -821,7 +821,7 @@ test('Style#setLayerZoomRange', function(t) {
 
 test('Style#featuresAt - race condition', function(t) {
     var style = new Style({
-        "version": 8,
+        "version": 9,
         "sources": {
             "mapbox": {
                 "type": "vector",
@@ -872,7 +872,7 @@ test('Style#featuresAt - race condition', function(t) {
 
 test('Style#featuresAt', function(t) {
     var style = new Style({
-        "version": 8,
+        "version": 9,
         "sources": {
             "mapbox": {
                 "type": "vector",

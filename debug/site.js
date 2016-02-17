@@ -5,7 +5,7 @@ var map = new mapboxgl.Map({
     container: 'map',
     zoom: 12.5,
     center: [-77.01866, 38.888],
-    style: 'mapbox://styles/mapbox/streets-v8',
+    style: 'streets-v9.json',
     hash: true
 });
 
@@ -25,16 +25,8 @@ map.on('load', function() {
             "line-color": "#EC8D8D",
             "line-width": {
                 "base": 1.5,
-                "stops": [
-                    [
-                        5,
-                        0.75
-                    ],
-                    [
-                        18,
-                        32
-                    ]
-                ]
+                "domain": [5, 18],
+                "range": [0.75, 32]
             }
         }
     }, 'country-label-lg');
@@ -50,7 +42,6 @@ map.on('load', function() {
         "source": "geojson-random-points",
         "paint": {
             "circle-radius": 5,
-            "circle-opacity": 0.5,
             "circle-color": {
                 range: ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'],
                 domain: [0, 16, 32, 48, 64, 80, 100],

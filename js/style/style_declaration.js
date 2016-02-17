@@ -1,7 +1,7 @@
 'use strict';
 
 var parseColor = require('./parse_color');
-var createStyleFunction = require('./style_function');
+var createStyleFunction = require('mapbox-gl-function');
 
 module.exports = StyleDeclaration;
 
@@ -14,11 +14,11 @@ function StyleDeclaration(reference, value) {
     this.json = JSON.stringify(this.value);
 
     var parsedValue = this.type === 'color' ? parseColor(value) : value;
-    this.calculate = createStyleFunction(reference, parsedValue);
+    this.calculate = createStyleFunction(parsedValue);
     this.isFeatureConstant = this.calculate.isFeatureConstant;
     this.isGlobalConstant = this.calculate.isGlobalConstant;
 
-    if (reference.function !== 'interpolated' && reference.transition) {
+    if (reference.function === 'discrete' && reference.transition) {
         this.calculate = transitioned(this.calculate);
     }
 }

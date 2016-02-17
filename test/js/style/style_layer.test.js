@@ -328,7 +328,8 @@ test('StyleLayer#serialize', function(t) {
         var layerPaint = {
             'text-color': {
                 base: 2,
-                stops: [[0, 'red'], [1, 'blue']]
+                domain: [0, 1],
+                range: ['red', 'blue']
             }
         };
 
@@ -422,7 +423,8 @@ test('StyleLayer#serialize', function(t) {
         var layerPaint = {
             'text-color': {
                 base: 2,
-                stops: [[0, 'red'], [1, 'blue']]
+                domain: [0, 1],
+                range: ['red', 'blue']
             }
         };
 
